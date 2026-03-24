@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Aura Cold Brew</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">AURA<span>.</span></a></div>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#shop">Shop</a></li>
+            <li><a href="subscribe.html">Subscribe</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="cart-btn" id="cartBtn" aria-label="Open Cart" onclick="window.location.href='cart.html'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span class="cart-count">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <main style="padding-top: 150px; min-height: 80vh; max-width: 800px; margin: 0 auto; padding-left: 5%; padding-right: 5%;">
+        <h1 style="margin-bottom: 2rem; font-size: 3rem; color: var(--accent-color);">Your Cart</h1>
+        <div id="cartItemsContainer" class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+            <!-- Cart items injected here via JS -->
+        </div>
+        <div class="cart-summary glass" style="padding: 2rem; text-align: right;">
+            <h2 style="font-size: 2rem; margin-bottom: 1rem;">Total: $<span id="cartTotalDisplay">0.00</span></h2>
+            <button class="btn btn-primary" style="margin-top: 1rem; width: 100%; max-width: 250px;">Secure Checkout</button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo">AURA<span>.</span></div>
+                <p>Redefining cold coffee.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <a href="#">FAQ</a>
+                <a href="#">Shipping</a>
+                <a href="#">Returns</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Aura Cold Brew. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartItemsContainer = document.getElementById('cartItemsContainer');
+            const cartTotalDisplay = document.getElementById('cartTotalDisplay');
+            let currentCart = JSON.parse(localStorage.getItem('auraCart')) || [];
+
+            function renderCart() {
+                cartItemsContainer.innerHTML = '';
+                let total = 0;
+
+                if (currentCart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p style="color: #ccc; text-align: center; font-size: 1.2rem; padding: 2rem;">Your cart is currently empty. <br><br> <a href="index.html#shop" class="btn btn-secondary">Continue Shopping</a></p>';
+                    cartTotalDisplay.textContent = '0.00';
+                    return;
+                }
+
+                currentCart.forEach((item, index) => {
+                    total += item.price * item.quantity;
+                    cartItemsContainer.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding: 1.5rem 0;">
+                            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                <img src="${item.image}" alt="${item.name}" style="width: 70px; height: auto; border-radius: 8px;">
+                                <div>
+                                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">${item.name}</h3>
+                                    <p style="color: #aaa; margin: 0; font-family: 'Outfit', sans-serif;">$${item.price.toFixed(2)} x ${item.quantity}</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="removeItem(${index})" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Remove</button>
+                        </div>
+                    `;
+                });
+                cartTotalDisplay.textContent = total.toFixed(2);
+            }
+
+            window.removeItem = function(index) {
+                currentCart.splice(index, 1);
+                localStorage.setItem('auraCart', JSON.stringify(currentCart));
+                window.location.reload();
+            }
+
+            renderCart();
+        });
+    </script>
+</body>
+</html>
